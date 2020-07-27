@@ -1,0 +1,38 @@
+\connect runner;
+
+insert into commands (id,name,command,defaults,timeout) values (1,'ping','ping -n {{count}} {{ip}}','{"ip":"8.8.8.8","count":1}'::json,5);
+insert into commands (id,name,command,defaults,timeout) values (101,'send_telegram','node /project/runner-scripts/send_telegram/index.js {{token}} {{chatId}} "{{metadata}}"','{}'::json,5);
+
+
+insert into checks (id,name,cron,active,command_id,command_params,tags,dependency)
+values (1,'check1','0 * * * * *',true,1,'{"ip":"192.168.0.1"}'::json,'{"device":"pepito1"}'::jsonb,'{}'::jsonb);
+
+insert into checks (id,name,cron,active,command_id,command_params,tags,dependency)
+values (2,'check2','0 * * * * *',true,1,'{"ip":"192.168.0.1","count":100}'::json,'{"device":"pepito2"}'::jsonb,'{}'::jsonb );
+
+insert into checks (id,name,cron,active,command_id,command_params,tags,dependency)
+values (3,'check3','0 * * * * *',true,1,'{}'::json,'{"device":"pepito3"}'::jsonb,'{"device":"pepito2"}'::jsonb);
+
+
+
+
+insert into subscribers (id,name,active,command_id,command_params,tags,event_type,status_to,dependency_check)
+values (1,'grupo1_telegram',true,101,'{"token":"TOKEN","<chatId>":"<CHATID>"}'::json,'{}'::jsonb,ARRAY['Update','Problem','Recovery'],ARRAY[0,1,2,3],true);
+
+
+
+insert INTO event_type_map (status_from,status_to,type) VALUES (0,1,'Problem');
+insert INTO event_type_map (status_from,status_to,type) VALUES (0,2,'Problem');
+insert INTO event_type_map (status_from,status_to,type) VALUES (0,3,'Problem');
+insert INTO event_type_map (status_from,status_to,type) VALUES (1,0,'Recovery');
+insert INTO event_type_map (status_from,status_to,type) VALUES (1,2,'Problem');
+insert INTO event_type_map (status_from,status_to,type) VALUES (1,3,'Problem');
+insert INTO event_type_map (status_from,status_to,type) VALUES (2,0,'Recovery');
+insert INTO event_type_map (status_from,status_to,type) VALUES (2,1,'Update');
+insert INTO event_type_map (status_from,status_to,type) VALUES (2,3,'Problem');
+insert INTO event_type_map (status_from,status_to,type) VALUES (3,0,'Recovery');
+insert INTO event_type_map (status_from,status_to,type) VALUES (3,1,'Update');
+insert INTO event_type_map (status_from,status_to,type) VALUES (3,2,'Update');
+
+
+

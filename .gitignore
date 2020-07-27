@@ -1,0 +1,2 @@
+/postgres/docker-entrypoint-initdb.d/11-data-runner.sql
+/.env
